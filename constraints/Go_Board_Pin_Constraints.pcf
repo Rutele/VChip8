@@ -1,0 +1,28 @@
+# Go Board Pin Constraints File
+# Family & Device:    iCE40HX1K
+# Package:            VQ100
+
+# Main FPGA Clock
+set_io i_Clk 15
+
+# Push-Button Switches
+set_io i_UP 53
+set_io i_DOWN 51
+set_io i_Run 54
+set_io i_Rst 52
+
+# 7 Segment Outputs
+set_io o_Segment1_A 3
+set_io o_Segment1_B 4
+set_io o_Segment1_C 93
+set_io o_Segment1_D 91
+set_io o_Segment1_E 90
+set_io o_Segment1_F 1
+set_io o_Segment1_G 2
+set_io o_Segment2_A 100
+set_io o_Segment2_B 99
+set_io o_Segment2_C 97
+set_io o_Segment2_D 95
+set_io o_Segment2_E 94
+set_io o_Segment2_F 8
+set_io o_Segment2_G 96
