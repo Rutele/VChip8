@@ -4,6 +4,12 @@ use ieee.numeric_std.all;
 
 package chip8_const_pkg is
 
+    -- General Constants
+    constant CHIP8_WORD_SIZE: integer := 8;
+
+    -- ALU Constants
+    constant CHIP8_ALU_CTRL_SIZE: integer := 3;
+
     -- Register File Constants
     constant REG_COUNT: integer := 16;
     constant REG_DATA_WIDTH: integer := 8;
