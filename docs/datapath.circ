@@ -56,7 +56,7 @@
     <a name="circuit" val="DataPath"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
     <a name="simulationFrequency" val="1.0"/>
-    <comp lib="4" loc="(1950,460)" name="Register">
+    <comp lib="4" loc="(1650,440)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="ResultRegister"/>
       <a name="showInTab" val="true"/>
@@ -83,7 +83,7 @@
       <a name="showInTab" val="true"/>
       <a name="width" val="16"/>
     </comp>
-    <comp loc="(1450,470)" name="RegisterFile">
+    <comp loc="(1590,470)" name="RegisterFile">
       <a name="appearance" val="logisim_evolution"/>
     </comp>
     <wire from="(250,470)" to="(330,470)"/>
@@ -130,4 +130,75 @@ begin
 
 end architecture;
 </vhdl>
+  <vhdl name="InstructionDecoder">library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.chip8_const_pkg.all;
+use work.chip8_types_pkg.all;
+
+entity InstructionDecoder is
+    port(
+        i_Clk : in std_logic;
+        i_Rst : in std_logic;
+        i_InstrOpcode : in chip8_instr_opcode_t;
+        o_PCWrite : out std_logic;
+        o_IRWrite : out std_logic;
+        o_RRWrite : out std_logic;
+        o_RegFileWrite : out std_logic;
+        o_ALUOp : out chip8_alu_op_t
+    );
+end InstructionDecoder;
+
+architecture RTL of InstructionDecoder is
+
+    signal r_CurrState : chip8_fsm_state_t;
+
+begin
+
+    process(i_Clk, i_Rst) is
+    begin
+        if (i_Rst) then
+            r_CurrState &lt;= chip8_fsm_state_fetch;
+        elsif rising_edge(i_Clk) then
+            case r_CurrState is
+                when chip8_fsm_state_fetch =&gt;
+                    r_CurrState &lt;= chip8_fsm_state_decode;
+                when chip8_fsm_state_decode =&gt;
+                    case i_InstrOpcode is
+                        when chip8_instr_opcode_store_imm =&gt;
+                            r_CurrState &lt;= chip8_fsm_state_writeVX;
+                        when others =&gt;
+                            r_CurrState &lt;= chip8_fsm_state_fetch;
+                    end case;
+                when others =&gt;
+                    r_CurrState &lt;= chip8_fsm_state_fetch;
+            end case;
+        end if;
+    end process;
+
+    process(r_CurrState) is
+    begin
+        case r_CurrState is
+            when chip8_fsm_state_fetch =&gt;
+                o_PCWrite &lt;= '0';
+                o_IRWrite &lt;= '1';
+                o_RRWrite &lt;= '0';
+                o_RegFileWrite &lt;= '0';
+                o_ALUOp &lt;= chip8_alu_add;
+            when chip8_fsm_state_decode =&gt;
+                o_PCWrite &lt;= '0';
+                o_IRWrite &lt;= '0';
+                o_RRWrite &lt;= '1';
+                o_RegFileWrite &lt;= '0';
+                o_ALUOp &lt;= chip8_alu_add;
+            when others =&gt;
+                o_PCWrite &lt;= '0';
+                o_IRWrite &lt;= '0';
+                o_RRWrite &lt;= '0';
+                o_RegFileWrite &lt;= '1';
+                o_ALUOp &lt;= chip8_alu_add;
+        end case;
+    end process;
+
+end architecture;</vhdl>
 </project>
