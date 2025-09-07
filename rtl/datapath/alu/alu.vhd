@@ -9,7 +9,7 @@ entity CHIP8_ALU is
         i_VX, i_VY:     in std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
         i_ALUCtrl:      in chip8_alu_op_t;
         o_ALUResult:    out std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-        o_UniF:           out std_logic    -- Universal flag interpreted based on the instruction
+        o_Flag:         out std_logic    -- Universal flag interpreted based on the instruction
     );
 end CHIP8_ALU;
 
@@ -50,6 +50,6 @@ begin
     end process;
 
     o_ALUResult <= w_Result(CHIP8_WORD_SIZE-1 downto 0);
-    o_UniF <= w_Flag;
+    o_Flag <= w_Flag;
 
 end architecture RTL;
