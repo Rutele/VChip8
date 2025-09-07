@@ -11,6 +11,13 @@ package chip8_types_pkg is
     -- Register File Types
     type reg_arr_t is array (0 to REG_COUNT-1) of std_logic_vector(REG_DATA_WIDTH-1 downto 0);
 
+    -- Instruction Decoder Types
+    type chip8_instr_opcode_t is (chip8_instr_opcode_store_imm);
+
+    -- Instruction Decoder FSM States
+    type chip8_fsm_state_t is (chip8_fsm_state_fetch, chip8_fsm_state_decode,
+                               chip8_fsm_state_writeVX);
+
 end package;
 
 package body chip8_types_pkg is
