@@ -13,7 +13,7 @@ package chip8_types_pkg is
 
     -- Instruction Decoder Types
     type chip8_instr_opcode_t is (chip8_instr_opcode_store_imm, chip8_instr_opcode_ALU_calc,
-                                  chip8_instr_opcode_add_imm);
+                                  chip8_instr_opcode_add_imm, chip8_instr_opcode_illegal);
 
     -- Instruction Decoder FSM States
     type chip8_fsm_state_t is (chip8_fsm_state_fetch, chip8_fsm_state_decode,
