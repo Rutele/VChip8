@@ -8,11 +8,17 @@ class CustomTypeParser:
         self.path = Path(path)
         self.types: dict[str, dict[str, int]] = {}
         self.tokenized_types: list[list[str]] = []
+
+        self._validate_path()
         self._tokenize_types()
         self._generate_dict()
 
     def __repr__(self):
         return f"Parsed types: {list(self.types.keys())}"
+    
+    def _validate_path(self):
+        if not self.path.exists():
+            raise Exception(f"{self.path} does not exist!")
 
     def _tokenize_types(self):
         with open(self.path, 'r') as f:
@@ -48,6 +54,3 @@ class CustomTypeParser:
 
     def _filter_value_names(self, name: str) -> str:
         return "".join(c for c in name if c not in self.TYPE_VAL_CHAR_FILTER)
-
-o = CustomTypeParser()
-print(o)
