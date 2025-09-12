@@ -1,14 +1,12 @@
 import sys
-import cocotb
-
 from pathlib import Path
 from cocotb.runner import get_runner
-from cocotb.clock import Clock
 
 class DeviceTester():
 
-    def __init__(self, dut_name: str, dut_path: str, dut_deps: list[str], test_module: str, sim_name: str = "ghdl", output_path: str = "../test_out",
-                 is_combinational: bool = False):
+    def __init__(self, dut_name: str, dut_path: str, dut_deps: list[str], test_module: str, 
+                 sim_name: str = "ghdl", output_path: str = "test_out",):
+
         self.dut_name = dut_name
         self.dut_path = Path(dut_path)
         self.dut_deps = [Path(path) for path in dut_deps]
@@ -16,7 +14,6 @@ class DeviceTester():
         self.output_path = output_path
         self.sim_name = sim_name
         self.test_runner = None
-        self.is_combinational = is_combinational
 
         self._validate_paths()
         self._build_device_and_tester()
@@ -41,7 +38,7 @@ class DeviceTester():
             verbose=True,
             build_dir=self.output_path,
             waves=True,
-            log_file=self.output_path + "/test.log",
+            log_file=self.output_path + f"/{self.dut_name}_test.log",
         )
 
     def _insert_module_path(self):
@@ -50,4 +47,4 @@ class DeviceTester():
 
     def run_test(self):
         self.test_runner.test(test_module=self.test_module, hdl_toplevel=self.dut_name, hdl_toplevel_library="work",
-                              test_args=["--std=08"], plusargs=["--wave=waveform.ghw"], waves=True,)
+                              test_args=["--std=08"], plusargs=[f"--wave={self.dut_name}_test_waveform.ghw"], waves=True,)
