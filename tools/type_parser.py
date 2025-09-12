@@ -16,6 +16,14 @@ class CustomTypeParser:
     def __repr__(self):
         return f"Parsed types: {list(self.types.keys())}"
     
+    def __getitem__(self, key: str) -> dict[str, int]:
+        if key not in self.types:
+            raise KeyError(f"Type '{key}' not found! Available: {list(self.types.keys())}")
+        return self.types[key]
+    
+    def __contains__(self, key: str) -> bool:
+        return key in self.types
+    
     def _validate_path(self):
         if not self.path.exists():
             raise Exception(f"{self.path} does not exist!")
