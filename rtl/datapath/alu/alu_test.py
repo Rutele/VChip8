@@ -1,13 +1,10 @@
 import cocotb
 from cocotb.triggers import Timer
-from cocotb.binary import BinaryValue
-
 import sys
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parents[3]
 sys.path.append(str(project_root / "tools"))
-
 from type_parser import CustomTypeParser
 
 custom_types = CustomTypeParser(project_root/"rtl"/"pkg"/"chip8_types.vhd")
