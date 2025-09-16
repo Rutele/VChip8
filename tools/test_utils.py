@@ -4,15 +4,16 @@ from cocotb.runner import get_runner
 
 class DeviceTester():
 
-    def __init__(self, dut_name: str, dut_path: str, dut_deps: list[str], test_module: str, 
-                 sim_name: str = "ghdl", output_path: str = "test_out",):
+    def __init__(self, dut_name: str, dut_path: str, dut_deps: list[str], test_module: str,
+                 test_cases: str | list[str] | None, sim_name: str = "ghdl", output_path: str = "test_out",):
 
         self.dut_name = dut_name
         self.dut_path = Path(dut_path)
         self.dut_deps = [Path(path) for path in dut_deps]
         self.test_module = test_module
-        self.output_path = output_path
+        self.output_path = output_path + f"//{dut_name}"
         self.sim_name = sim_name
+        self.test_cases = test_cases
         self.test_runner = None
 
         self._validate_paths()
@@ -47,4 +48,5 @@ class DeviceTester():
 
     def run_test(self):
         self.test_runner.test(test_module=self.test_module, hdl_toplevel=self.dut_name, hdl_toplevel_library="work",
-                              test_args=["--std=08"], plusargs=[f"--wave={self.dut_name}_test_waveform.ghw"], waves=True,)
+                              test_args=["--std=08"], plusargs=[f"--wave={self.dut_name}_test_waveform.ghw"], waves=True,
+                              test_dir=self.output_path, build_dir=self.output_path, testcase=self.test_cases)
