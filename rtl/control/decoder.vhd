@@ -104,7 +104,7 @@ begin
                 o_ALUOp     <= chip8_alu_nop;
                 o_ALU_VXSrc <= chip8_alu_vx_normal;
                 o_ALU_VYSrc <= chip8_alu_vy_normal;
-                o_RF_VXSrc  <= chip8_rf_vx_vf;
+                o_RF_VXSrc  <= chip8_rf_vx_normal;
             when chip8_fsm_state_writeVF =>
                 o_PCWrite   <= '0';
                 o_IRWrite   <= '0';
