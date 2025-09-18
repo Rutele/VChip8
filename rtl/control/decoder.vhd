@@ -9,13 +9,13 @@ entity InstructionDecoder is
     port(
         i_Clk : in std_logic;
         i_Rst : in std_logic;
-        i_InstrOpcode : in chip8_instr_opcode_t; -- Instruction MSB (1 byte)
-        i_InstrSub : in chip8_alu_op_t; -- Instruction LSB (1 byte)
-        o_PCWrite : out std_logic;      -- Program Counter Write
-        o_IRWrite : out std_logic;      -- Instruction Register Write
-        o_RRWrite : out std_logic;      -- Result Register Write
-        o_RFWrite : out std_logic;      -- Register File Write
-        o_ALUOp : out chip8_alu_op_t;        -- ALU Instruction
+        i_InstrOpcode : in chip8_instr_opcode_t;    -- Instruction MSB (1 byte)
+        i_InstrSub : in chip8_alu_op_t;             -- Instruction LSB (1 byte)
+        o_PCWrite : out std_logic;                  -- Program Counter Write
+        o_IRWrite : out std_logic;                  -- Instruction Register Write
+        o_RRWrite : out std_logic;                  -- Result Register Write
+        o_RFWrite : out std_logic;                  -- Register File Write
+        o_ALUOp : out chip8_alu_op_t;               -- ALU Instruction
         o_ALU_VXSrc : out chip8_alu_vx_t;
         o_ALU_VYSrc : out chip8_alu_vy_t;
         o_RF_VXSrc : out chip8_rf_vx_src_t
@@ -39,7 +39,7 @@ begin
                     r_CurrState <= chip8_fsm_state_decode;
                 when chip8_fsm_state_decode =>
                     case i_InstrOpcode is
-                        when chip8_instr_opcode_StoreImm | chip8_instr_opcode_ALUExec 
+                        when chip8_instr_opcode_StoreImm | chip8_instr_opcode_ALUExec |
                              chip8_instr_opcode_AddImm =>
                             r_CurrState <= chip8_fsm_state_writeVX;
                         when others =>
@@ -88,7 +88,7 @@ begin
                         o_ALU_VXSrc <= chip8_alu_vx_normal;
                         o_ALU_VYSrc <= chip8_alu_vy_imm;
                     when chip8_instr_opcode_ALUExec =>
-                        o_ALUOp     <= i_InstrOpcode;
+                        o_ALUOp     <= i_InstrSub;
                         o_ALU_VXSrc <= chip8_alu_vx_normal;
                         o_ALU_VYSrc <= chip8_alu_vy_normal;
                    when others =>
