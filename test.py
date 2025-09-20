@@ -11,7 +11,12 @@ tests = {
         "dut_path": "rtl/datapath/register_file/regfile.vhd",
         "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd"],
         "test_module": "regfile_test"
-    } 
+    },
+    "instructiondecoder": {
+        "dut_path": "rtl/control/decoder.vhd",
+        "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd"],
+        "test_module": "decoder_test"
+    }
 }
 
 

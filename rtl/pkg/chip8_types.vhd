@@ -12,13 +12,15 @@ package chip8_types_pkg is
     type reg_arr_t is array (0 to REG_COUNT-1) of std_logic_vector(REG_DATA_WIDTH-1 downto 0);
 
     -- Instruction Decoder Types
-    type chip8_instr_opcode_t is (chip8_instr_opcode_store_imm, chip8_instr_opcode_ALU_calc,
-                                  chip8_instr_opcode_add_imm, chip8_instr_opcode_illegal);
+    type chip8_instr_opcode_t is (chip8_instr_opcode_StoreImm, chip8_instr_opcode_ALUExec,
+                                  chip8_instr_opcode_AddImm, chip8_instr_opcode_Illegal);
 
-    -- Instruction Decoder FSM States
     type chip8_fsm_state_t is (chip8_fsm_state_fetch, chip8_fsm_state_decode,
-                               chip8_fsm_state_writeVX, chip8_fsm_state_ALUOp,
-                               chip8_fsm_state_writeVF);
+                               chip8_fsm_state_writeVX, chip8_fsm_state_writeVF);
+
+    type chip8_alu_vx_t is (chip8_alu_vx_normal, chip8_alu_vx_zero);
+    type chip8_alu_vy_t is (chip8_alu_vy_normal, chip8_alu_vy_imm);
+    type chip8_rf_vx_src_t is (chip8_rf_vx_normal, chip8_rf_vx_vf);
 
 end package;
 

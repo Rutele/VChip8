@@ -3,7 +3,8 @@ bin
 lib
 lib64
 __pycache__
-pyenv.cfg
+pyvenv.cfg
 *.mti
 *.mpf
 *.wlf
+test_out/

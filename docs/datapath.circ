@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project source="3.9.0" version="1.0">
-  This file is intended to be loaded by Logisim-evolution v3.9.0(https://github.com/logisim-evolution/).
+<project source="4.0.0" version="1.0">
+  This file is intended to be loaded by Logisim-evolution v4.0.0(https://github.com/logisim-evolution/).
 
   <lib desc="#Wiring" name="0">
     <tool name="Pin">
@@ -38,7 +38,7 @@
     <tool lib="0" name="Pin"/>
     <tool lib="0" name="Pin">
       <a name="facing" val="west"/>
-      <a name="output" val="true"/>
+      <a name="type" val="output"/>
     </tool>
     <sep/>
     <tool lib="1" name="NOT Gate"/>
@@ -56,7 +56,7 @@
     <a name="circuit" val="DataPath"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
     <a name="simulationFrequency" val="1.0"/>
-    <comp lib="4" loc="(1650,440)" name="Register">
+    <comp lib="4" loc="(1830,440)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="ResultRegister"/>
       <a name="showInTab" val="true"/>
@@ -66,6 +66,9 @@
       <a name="label" val="PC"/>
       <a name="showInTab" val="true"/>
       <a name="width" val="16"/>
+    </comp>
+    <comp lib="4" loc="(450,230)" name="D Flip-Flop">
+      <a name="appearance" val="logisim_evolution"/>
     </comp>
     <comp lib="4" loc="(550,460)" name="ROM">
       <a name="addrWidth" val="16"/>
@@ -83,7 +86,7 @@
       <a name="showInTab" val="true"/>
       <a name="width" val="16"/>
     </comp>
-    <comp loc="(1590,470)" name="RegisterFile">
+    <comp loc="(1490,470)" name="RegisterFile">
       <a name="appearance" val="logisim_evolution"/>
     </comp>
     <wire from="(250,470)" to="(330,470)"/>
