@@ -5,6 +5,8 @@ use ieee.numeric_std.all;
 package chip8_const_pkg is
 
     -- General Constants
+    constant CHIP8_ADDRESS_SIZE: integer := 16;
+    constant CHIP8_INSTR_SIZE: integer := 16;
     constant CHIP8_WORD_SIZE: integer := 8;
 
     -- ALU Constants
