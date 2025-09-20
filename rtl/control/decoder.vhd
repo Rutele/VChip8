@@ -48,7 +48,11 @@ begin
                 when chip8_fsm_state_writeVX =>
                     case i_InstrSub is
                         when chip8_alu_add | chip8_alu_sub | chip8_alu_sl | chip8_alu_sr =>
-                            r_CurrState <= chip8_fsm_state_writeVF;
+                            if i_InstrOpcode = chip8_instr_opcode_ALUExec then
+                                r_CurrState <= chip8_fsm_state_writeVF;
+                            else 
+                                r_CurrState <= chip8_fsm_state_fetch;
+                            end if;
                         when others =>
                             r_CurrState <= chip8_fsm_state_fetch;
                     end case;
@@ -71,13 +75,12 @@ begin
                 o_ALUOp     <= chip8_alu_nop;
                 o_ALU_VXSrc <= chip8_alu_vx_normal;
                 o_ALU_VYSrc <= chip8_alu_vy_normal;
-                o_RF_VXSrc  <= chip8_rf_vx_vf;
+                o_RF_VXSrc  <= chip8_rf_vx_normal;
             when chip8_fsm_state_decode =>
                 o_PCWrite   <= '0';
                 o_IRWrite   <= '0';
                 o_RRWrite   <= '1';
                 o_RFWrite   <= '0';
-                o_RF_VXSrc  <= chip8_rf_vx_normal;
                 case i_InstrOpcode is
                     when chip8_instr_opcode_StoreImm =>
                         o_ALUOp     <= chip8_alu_add;
@@ -122,7 +125,7 @@ begin
                 o_ALUOp     <= chip8_alu_nop;
                 o_ALU_VXSrc <= chip8_alu_vx_normal;
                 o_ALU_VYSrc <= chip8_alu_vy_normal;
-                o_RF_VXSrc  <= chip8_rf_vx_vf;
+                o_RF_VXSrc  <= chip8_rf_vx_normal;
         end case;
     end process;
 end architecture;
