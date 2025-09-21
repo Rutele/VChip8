@@ -3,6 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.chip8_const_pkg.all;
 use work.chip8_types_pkg.all;
+use work.chip8_decoder_types_pkg.all;
 
 entity Datapath is
     port(

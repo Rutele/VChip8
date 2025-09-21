@@ -14,7 +14,8 @@ tests = {
     },
     "instructiondecoder": {
         "dut_path": "rtl/control/decoder.vhd",
-        "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd"],
+        "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd", 
+                         "rtl/control/source_decoder/source_decoder.vhd"],
         "test_module": "decoder_test"
     }
 }
