@@ -19,12 +19,18 @@ end entity;
 architecture RTL of GenericRegister is
 begin
 
-    process(i_Clk, i_Rst)
+    process(i_Clk, i_Rst, i_Write)
     begin
         if i_Rst = '1' then
             o_Q <= (others => '0');
-        elsif rising_edge(i_Clk) and i_Write = '1' then
-            o_Q <= i_D;
+        elsif rising_edge(i_Clk) then
+            if i_Write = '0' then
+                o_Q <= o_Q;
+            elsif i_Write = '1' then
+                o_Q <= i_D;
+            else
+                o_Q <= (others => '0');
+            end if;
         end if;
     end process;
 
@@ -48,12 +54,18 @@ end entity;
 architecture RTL of GenericRegisterLogic is
 begin
 
-    process(i_Clk, i_Rst)
+    process(i_Clk, i_Rst, i_Write)
     begin
         if i_Rst = '1' then
             o_Q <= '0';
-        elsif rising_edge(i_Clk) and i_Write = '1' then
-            o_Q <= i_D;
+        elsif rising_edge(i_Clk) then
+            if i_Write = '0' then
+                o_Q <= o_Q;
+            elsif i_Write = '1' then
+                o_Q <= i_D;
+            else
+                o_Q <= '0';
+            end if;
         end if;
     end process;
 

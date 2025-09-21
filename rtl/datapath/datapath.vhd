@@ -44,9 +44,11 @@ architecture RTL of Datapath is
 
     -- MUX Select Signals
     signal w_ALU_VXSel : std_logic;
+    signal w_RF_VXSel : std_logic;
     signal w_ALU_VYSel : std_logic_vector(1 downto 0);
     signal w_ALU_DataX : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
     signal w_ALU_DataY : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+    signal w_RF_VX : std_logic_vector(CHIP8_RF_SEL_SIZE-1 downto 0);
 
 begin
 
@@ -61,6 +63,7 @@ begin
 
     w_ALU_VXSel <= alu_vx_src_to_signal(w_ALU_VXSrc);
     w_ALU_VYSel <= alu_vy_src_to_signal(w_ALU_VYSrc);
+    w_RF_VXSel <= rf_vx_src_to_signal(w_RF_VXSrc);
 
     MUX_ALUVX: entity work.MUX2(RTL)
     port map(
@@ -79,11 +82,22 @@ begin
         o_Data => w_ALU_DataY
     );
 
+    MUX_RFVX: entity work.MUX2(RTL)
+    generic map(
+        DATA_WIDTH => CHIP8_RF_SEL_SIZE
+    )
+    port map(   
+        i_Sel => w_RF_VXSel,
+        i_Data1 => w_SelX,
+        i_Data2 => (others => '1'),
+        o_Data => w_RF_VX
+    );
+
     RegisterFile: entity work.RegisterFile(RTL)
     port map(
         i_Clk => i_Clk,
         i_Rst => i_Rst,
-        i_SelX => w_SelX,
+        i_SelX => w_RF_VX,
         i_SelY => w_SelY,
         i_WriteEnable => w_RFWrite,
         i_WriteData => r_RRValue,
@@ -116,6 +130,14 @@ begin
         o_Flag => w_ALUFlag
     );
 
+    PC: entity work.ProgramCounter(RTL)
+    port map (
+        i_Clk => i_Clk,
+        i_Rst => i_Rst,
+        i_Write => w_PCWrite,
+        o_InstrAddress => o_Address
+    );
+
     RR: entity work.GenericRegister(RTL)
     port map (
         i_Clk => i_Clk,
@@ -123,18 +145,6 @@ begin
         i_Write => w_RRWrite,
         i_D => w_ALUResult,
         o_Q => r_RRValue
-    );
-
-    PC: entity work.GenericRegister(RTL)
-    generic map(
-        WIDTH => 16
-    )
-    port map (
-        i_Clk => i_Clk,
-        i_Rst => i_Rst,
-        i_Write => w_PCWrite,
-        i_D => (others => '0'), --TODO Change with branching instructions
-        o_Q => o_Address
     );
 
     IR: entity work.GenericRegister(RTL)

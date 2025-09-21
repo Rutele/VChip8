@@ -17,7 +17,8 @@ package chip8_types_pkg is
                                   chip8_instr_opcode_AddImm, chip8_instr_opcode_Illegal);
 
     type chip8_fsm_state_t is (chip8_fsm_state_fetch, chip8_fsm_state_decode,
-                               chip8_fsm_state_writeVX, chip8_fsm_state_writeVF);
+                               chip8_fsm_state_writeVX, chip8_fsm_state_writeVF,
+                               chip8_fsm_state_reset);
 
     type chip8_alu_vx_t is (chip8_alu_vx_normal, chip8_alu_vx_zero);
     type chip8_alu_vy_t is (chip8_alu_vy_normal, chip8_alu_vy_imm, chip8_alu_vy_pc);

@@ -32,9 +32,11 @@ begin
     process(i_Clk, i_Rst) is
     begin
         if (i_Rst) then
-            r_CurrState <= chip8_fsm_state_fetch;
+            r_CurrState <= chip8_fsm_state_reset;
         elsif rising_edge(i_Clk) then
             case r_CurrState is
+                when chip8_fsm_state_reset =>
+                    r_CurrState <= chip8_fsm_state_fetch;
                 when chip8_fsm_state_fetch =>
                     r_CurrState <= chip8_fsm_state_decode;
                 when chip8_fsm_state_decode =>
@@ -64,7 +66,7 @@ begin
         end if;
     end process;
 
-    process(r_CurrState) is
+    process(r_CurrState, i_InstrOpcode, i_InstrSub) is
     begin
         case r_CurrState is
             when chip8_fsm_state_fetch =>
@@ -86,18 +88,22 @@ begin
                         o_ALUOp     <= chip8_alu_add;
                         o_ALU_VXSrc <= chip8_alu_vx_zero;
                         o_ALU_VYSrc <= chip8_alu_vy_imm;
+                        o_RF_VXSrc  <= chip8_rf_vx_normal;
                     when chip8_instr_opcode_AddImm =>
                         o_ALUOp     <= chip8_alu_add;
                         o_ALU_VXSrc <= chip8_alu_vx_normal;
                         o_ALU_VYSrc <= chip8_alu_vy_imm;
+                        o_RF_VXSrc  <= chip8_rf_vx_normal;
                     when chip8_instr_opcode_ALUExec =>
                         o_ALUOp     <= i_InstrSub;
                         o_ALU_VXSrc <= chip8_alu_vx_normal;
                         o_ALU_VYSrc <= chip8_alu_vy_normal;
+                        o_RF_VXSrc  <= chip8_rf_vx_normal;
                    when others =>
                         o_ALUOp     <= chip8_alu_nop;
                         o_ALU_VXSrc <= chip8_alu_vx_normal;
                         o_ALU_VYSrc <= chip8_alu_vy_normal;
+                        o_RF_VXSrc  <= chip8_rf_vx_normal;
                 end case;
             when chip8_fsm_state_writeVX =>
                 o_PCWrite   <= '0';
@@ -117,6 +123,15 @@ begin
                 o_ALU_VXSrc <= chip8_alu_vx_normal;
                 o_ALU_VYSrc <= chip8_alu_vy_normal;
                 o_RF_VXSrc  <= chip8_rf_vx_vf;
+            when chip8_fsm_state_reset =>
+                o_PCWrite   <= '0';
+                o_IRWrite   <= '0';
+                o_RRWrite   <= '0';
+                o_RFWrite   <= '0';
+                o_ALUOp     <= chip8_alu_nop;
+                o_ALU_VXSrc <= chip8_alu_vx_normal;
+                o_ALU_VYSrc <= chip8_alu_vy_normal;
+                o_RF_VXSrc  <= chip8_rf_vx_normal;
             when others =>
                 o_PCWrite   <= '0';
                 o_IRWrite   <= '0';
