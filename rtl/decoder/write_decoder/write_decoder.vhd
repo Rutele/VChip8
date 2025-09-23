@@ -15,13 +15,14 @@ architecture RTL of WriteDecoder is
     signal w_WriteSignals : chip8_write_signals_t;
 begin
 
-    w_WriteSignals <= CHIP8_WRITE_DEFAULT;
-
     process(i_FSMState) is
     begin
+
+        w_WriteSignals <= CHIP8_WRITE_DEFAULT;
+
         case i_FSMState is
             when chip8_fsm_state_reset =>
-                null;
+                w_WriteSignals.IRWrite <= '1';
             when chip8_fsm_state_fetch =>
                 w_WriteSignals.PCWrite <= '1';
                 w_WriteSignals.IRWrite <= '1';

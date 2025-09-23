@@ -16,55 +16,68 @@ end entity;
 
 architecture RTL of Datapath is
 
-    signal w_InstrTyped : chip8_instr_opcode_t;
+    -- Instruction signals
+    signal w_InstrTyped    : chip8_instr_opcode_t;
     signal w_InstrSubTyped : chip8_alu_op_t;
-    signal w_Imm : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-    signal w_SelX : std_logic_vector(REG_SEL_WIDTH-1 downto 0);
-    signal w_SelY : std_logic_vector(REG_SEL_WIDTH-1 downto 0);
-    signal w_RFOutX : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-    signal w_RFOutY : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+    signal w_Imm           : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+    signal w_RF_InstrSelX  : std_logic_vector(REG_SEL_WIDTH-1 downto 0);
+    signal w_RF_InstrSelY  : std_logic_vector(REG_SEL_WIDTH-1 downto 0);
 
-    -- ALU out signals
-    signal w_ALUResult : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-    signal w_ALUFlag : std_logic;
+    -- Register File signals
+    signal w_RF_SelX       : std_logic_vector(REG_SEL_WIDTH-1 downto 0);
 
-    -- Decoder out signals
-    signal w_PCWrite : std_logic;                  
-    signal w_IRWrite : std_logic;                  
-    signal w_RRWrite : std_logic;                  
-    signal w_RFWrite : std_logic;                  
-    signal w_ALUOp : chip8_alu_op_t;               
-    signal w_ALU_VXSrc : chip8_alu_vx_t;
-    signal w_ALU_VYSrc : chip8_alu_vy_t;
-    signal w_RF_VXSrc : chip8_rf_vx_src_t;
+    -- Internal Registers
+    signal r_IR : std_logic_vector(CHIP8_INSTR_SIZE-1 downto 0);
+    signal r_RR : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+    signal r_VF : std_logic;
 
-    -- Values in registers
-    signal r_RRValue : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-    signal r_IRValue : std_logic_vector(CHIP8_INSTR_SIZE-1 downto 0);
-    signal r_FRValue : std_logic;
+    -- Decoder outputs
+    signal w_SelSignals   : chip8_select_signals_t;
+    signal w_WriteSignals : chip8_write_signals_t;
+    signal w_ALUOp        : chip8_alu_op_t;
 
-    -- MUX Select Signals
+    -- Unpacked signals
     signal w_ALU_VXSel : std_logic;
-    signal w_RF_VXSel : std_logic;
-    signal w_ALU_VYSel : std_logic_vector(1 downto 0);
-    signal w_ALU_DataX : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-    signal w_ALU_DataY : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-    signal w_RF_VX : std_logic_vector(CHIP8_RF_SEL_SIZE-1 downto 0);
+    signal w_ALU_VYSel : std_logic;
+    signal w_RF_VXSel  : std_logic;
+    signal w_PCWrite, w_IRWrite, w_RRWrite, w_RFWrite : std_logic;
+
+    -- RF/ALU Data signals
+    signal w_RFOutX, w_RFOutY, w_RFData,
+           w_ALU_DataX, w_ALU_DataY, w_ALU_Result : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+    signal w_ALU_VF : std_logic;
+
 
 begin
 
-    -- Type conversions
-    w_InstrTyped <= inst_msb_to_inst_type(r_IRValue(CHIP8_INSTR_SIZE-1 downto 12));
-    w_InstrSubTyped <= inst_lsb_to_instsub_type(r_IRValue(3 downto 0));
-    w_Imm <= r_IRValue(CHIP8_WORD_SIZE-1 downto 0);
+    -- Instruction signals typing/extraction
+    w_InstrTyped    <= inst_msb_to_inst_type(r_IR(CHIP8_INSTR_SIZE-1 downto 12));
+    w_InstrSubTyped <= inst_lsb_to_instsub_type(r_IR(3 downto 0));
+    w_Imm           <= r_IR(CHIP8_WORD_SIZE-1 downto 0);
+    w_RF_InstrSelX  <= r_IR(11 downto 8);
+    w_RF_InstrSelY  <= r_IR(7 downto 4);
 
-    -- Data Selection
-    w_SelX <= r_IRValue(11 downto 8);
-    w_SelY <= r_IRValue(7 downto 4);
+    
+    Decoder: entity work.InstructionDecoder(RTL)
+    port map(
+        i_Clk => i_Clk,
+        i_Rst => i_Rst,
+        i_InstrOpcode => w_InstrTyped,
+        i_InstrSub => w_InstrSubTyped,
+        o_ALUOp => w_ALUOp,
+        o_SelSignals => w_SelSignals,
+        o_WriteSignals => w_WriteSignals
+    );
 
-    w_ALU_VXSel <= alu_vx_src_to_signal(w_ALU_VXSrc);
-    w_ALU_VYSel <= alu_vy_src_to_signal(w_ALU_VYSrc);
-    w_RF_VXSel <= rf_vx_src_to_signal(w_RF_VXSrc);
+    -- Unpack decoder records
+    w_ALU_VXSel <= alu_vx_src_to_signal(w_SelSignals.alu_vx);
+    w_ALU_VYSel <= alu_vy_src_to_signal(w_SelSignals.alu_vy);
+    w_RF_VXSel <= rf_vx_src_to_signal(w_SelSignals.rf_vx);
+
+    w_PCWrite   <= w_WriteSignals.PCWrite;
+    w_IRWrite   <= w_WriteSignals.IRWrite;
+    w_RRWrite   <= w_WriteSignals.RRWrite;
+    w_RFWrite   <= w_WriteSignals.RFWrite;
 
     MUX_ALUVX: entity work.MUX2(RTL)
     port map(
@@ -74,12 +87,11 @@ begin
         o_Data => w_ALU_DataX
     );
 
-    MUX_ALUVY: entity work.MUX3(RTL)
+    MUX_ALUVY: entity work.MUX2(RTL)
     port map(
         i_Sel => w_ALU_VYSel,
         i_Data1 => w_RFOutY,
         i_Data2 => w_Imm,
-        i_Data3 => o_Address(7 downto 0), -- Resolve the issue with the address
         o_Data => w_ALU_DataY
     );
 
@@ -87,39 +99,31 @@ begin
     generic map(
         DATA_WIDTH => CHIP8_RF_SEL_SIZE
     )
-    port map(   
+    port map(
         i_Sel => w_RF_VXSel,
-        i_Data1 => w_SelX,
-        i_Data2 => (others => '1'),
-        o_Data => w_RF_VX
+        i_Data1 => w_RF_InstrSelX,
+        i_Data2 => (others => '0'), -- Add VF (modify ALU)
+        o_Data => w_RF_SelX
+    );
+
+    MUX_RF_DATA: entity work.MUX2(RTL)
+    port map(
+        i_Sel => w_RF_VXSel,
+        i_Data1 => r_RR,
+        i_Data2 => (CHIP8_WORD_SIZE-2 downto 0 => '0') & r_VF,
+        o_Data => w_RFData
     );
 
     RegisterFile: entity work.RegisterFile(RTL)
     port map(
         i_Clk => i_Clk,
         i_Rst => i_Rst,
-        i_SelX => w_RF_VX,
-        i_SelY => w_SelY,
+        i_Selx => w_RF_SelX,
+        i_SelY => w_RF_InstrSelY,
         i_WriteEnable => w_RFWrite,
-        i_WriteData => r_RRValue,
+        i_WriteData => w_RFData,
         o_DataX => w_RFOutX,
         o_DataY => w_RFOutY
-    );
-
-    Decoder: entity work.InstructionDecoder(RTL)
-    port map(
-        i_Clk => i_Clk,
-        i_Rst => i_Rst,
-        i_InstrOpcode => w_InstrTyped,
-        i_InstrSub => w_InstrSubTyped,
-        o_PCWrite  => w_PCWrite,
-        o_IRWrite => w_IRWrite,
-        o_RRWrite => w_RRWrite,
-        o_RFWrite => w_RFWrite,
-        o_ALUOp => w_ALUOp,
-        o_ALU_VXSrc => w_ALU_VXSrc,
-        o_ALU_VYsrc => w_ALU_VYSrc,
-        o_RF_VXSrc => w_RF_VXSrc
     );
 
     ALU: entity work.CHIP8_ALU(RTL)
@@ -127,12 +131,12 @@ begin
         i_VX => w_ALU_DataX,
         i_VY => w_ALU_DataY,
         i_ALUCtrl => w_ALUOp,
-        o_ALUResult => w_ALUResult,
-        o_Flag => w_ALUFlag
+        o_ALUResult => w_ALU_Result,
+        o_Flag => w_ALU_VF
     );
 
     PC: entity work.ProgramCounter(RTL)
-    port map (
+    port map(
         i_Clk => i_Clk,
         i_Rst => i_Rst,
         i_Write => w_PCWrite,
@@ -140,33 +144,34 @@ begin
     );
 
     RR: entity work.GenericRegister(RTL)
-    port map (
+    port map(
         i_Clk => i_Clk,
         i_Rst => i_Rst,
         i_Write => w_RRWrite,
-        i_D => w_ALUResult,
-        o_Q => r_RRValue
+        i_D => w_ALU_Result,
+        o_Q => r_RR
     );
 
     IR: entity work.GenericRegister(RTL)
     generic map(
         WIDTH => CHIP8_INSTR_SIZE
     )
-    port map (
+    port map(
         i_Clk => i_Clk,
         i_Rst => i_Rst,
         i_Write => w_IRWrite,
         i_D => i_Instruction,
-        o_Q => r_IRValue
+        o_Q => r_IR
     );
 
-    FR: entity work.GenericRegisterLogic(RTL) -- TODO TMP solution, change to bigger ALU output
-    port map (
+    FR: entity work.GenericRegisterLogic(RTL)
+    port map(
         i_Clk => i_Clk,
         i_Rst => i_Rst,
-        i_Write => w_IRWrite,
-        i_D => w_ALUFlag,
-        o_Q => r_FRValue
+        i_Write => w_RRWrite,
+        i_D => w_ALU_VF,
+        o_Q => r_VF
     );
 
+    
 end architecture;

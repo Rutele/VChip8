@@ -10,7 +10,7 @@ package chip8_decoder_types_pkg is
                                chip8_fsm_state_reset);
     -- Select Signals Types
     type chip8_alu_vx_t is (chip8_alu_vx_normal, chip8_alu_vx_zero);
-    type chip8_alu_vy_t is (chip8_alu_vy_normal, chip8_alu_vy_imm, chip8_alu_vy_pc);
+    type chip8_alu_vy_t is (chip8_alu_vy_normal, chip8_alu_vy_imm);
     type chip8_rf_vx_src_t is (chip8_rf_vx_normal, chip8_rf_vx_vf);
 
     type chip8_select_signals_t is record
@@ -42,7 +42,7 @@ package chip8_decoder_types_pkg is
 
     -- FUNCTIONS
     function alu_vx_src_to_signal(src: chip8_alu_vx_t) return std_logic;
-    function alu_vy_src_to_signal(src: chip8_alu_vy_t) return std_logic_vector;
+    function alu_vy_src_to_signal(src: chip8_alu_vy_t) return std_logic;
     function rf_vx_src_to_signal(src: chip8_rf_vx_src_t) return std_logic;
 
 end package;
@@ -67,13 +67,12 @@ package body chip8_decoder_types_pkg is
         end case;
     end function;
 
-    function alu_vy_src_to_signal(src: chip8_alu_vy_t) return std_logic_vector is
+    function alu_vy_src_to_signal(src: chip8_alu_vy_t) return std_logic is
     begin
         case src is
-            when chip8_alu_vy_normal => return "00";
-            when chip8_alu_vy_imm => return "01";
-            when chip8_alu_vy_pc => return "10";
-            when others => return "00";
+            when chip8_alu_vy_normal => return '0';
+            when chip8_alu_vy_imm => return '1';
+            when others => return '0';
         end case;
     end function;
 
