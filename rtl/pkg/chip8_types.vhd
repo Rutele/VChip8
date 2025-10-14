@@ -6,6 +6,17 @@ use work.chip8_const_pkg.all;
 package chip8_types_pkg is
     -- TYPES
     type reg_arr_t is array (0 to REG_COUNT-1) of std_logic_vector(REG_DATA_WIDTH-1 downto 0);
+    type mem_arr_t is array (0 to MEM_SIZE-1) of std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+
+    constant MEM_INIT: mem_arr_t := (
+        00 => x"60",
+        01 => x"AA",
+        02 => x"61",
+        03 => x"BB",
+        04 => x"62",
+        05 => x"CC",
+        others => x"00"
+    );
 
     type chip8_alu_op_t is (chip8_alu_nop, chip8_alu_add, chip8_alu_sub,
                         chip8_alu_and, chip8_alu_or, chip8_alu_xor,

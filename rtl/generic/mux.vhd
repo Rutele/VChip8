@@ -16,6 +16,10 @@ entity MUX2 is
 end entity;
 
 architecture RTL of MUX2 is
+
+  attribute syn_noprune : boolean;
+  attribute syn_noprune of RTL : architecture is true;
+
 begin
 
     process(i_Sel, i_Data1, i_Data2) is
@@ -45,6 +49,10 @@ entity MUX3 is
 end entity;
 
 architecture RTL of MUX3 is
+
+  attribute syn_noprune : boolean;
+  attribute syn_noprune of RTL : architecture is true;
+
 begin
 
     process(i_Sel, i_Data1, i_Data2, i_Data3) is

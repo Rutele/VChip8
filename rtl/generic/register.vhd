@@ -17,6 +17,10 @@ entity GenericRegister is
 end entity;
 
 architecture RTL of GenericRegister is
+
+    attribute syn_noprune : boolean;
+    attribute syn_noprune of RTL : architecture is true;
+
 begin
     process(i_Clk)
     begin
@@ -46,6 +50,10 @@ entity GenericRegisterLogic is
 end entity;
 
 architecture RTL of GenericRegisterLogic is
+
+    attribute syn_noprune : boolean;
+    attribute syn_noprune of RTL : architecture is true;
+
 begin
     process(i_Clk)
     begin

@@ -15,6 +15,12 @@ end entity;
 
 architecture RTL of ProgramCounter is
 
+    attribute syn_preserve : boolean;
+    attribute syn_preserve of RTL : architecture is true;
+
+    attribute syn_noprune : boolean;
+    attribute syn_noprune of RTL : architecture is true;
+
     signal w_NextAddress : std_logic_vector(CHIP8_ADDRESS_SIZE-1 downto 0);
 
 begin

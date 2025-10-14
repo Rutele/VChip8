@@ -19,6 +19,9 @@ end RegisterFile;
 
 architecture RTL of RegisterFile is
 
+    attribute syn_noprune : boolean;
+    attribute syn_noprune of RTL : architecture is true;
+
     signal r_Registers: reg_arr_t;
 
 begin

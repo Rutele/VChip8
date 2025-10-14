@@ -21,8 +21,10 @@ end InstructionDecoder;
 
 architecture RTL of InstructionDecoder is
 
-    signal r_CurrState       : chip8_fsm_state_t;
+    attribute syn_noprune : boolean;
+    attribute syn_noprune of RTL : architecture is true;
 
+    signal r_CurrState       : chip8_fsm_state_t;
     signal w_ALUOp_int       : chip8_alu_op_t;
     signal w_SelSignals_int  : chip8_select_signals_t;
     signal w_WriteSignals_int: chip8_write_signals_t;

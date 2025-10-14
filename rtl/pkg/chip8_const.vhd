@@ -18,6 +18,9 @@ package chip8_const_pkg is
     constant REG_DATA_WIDTH: integer := 8;
     constant REG_SEL_WIDTH: integer := 4;
 
+    -- Memory Related Constants
+    constant MEM_SIZE: integer := 4096;
+
 end package;
 
 package body chip8_const_pkg is
