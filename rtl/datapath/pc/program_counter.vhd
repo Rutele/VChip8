@@ -29,7 +29,8 @@ begin
 
     PC: entity work.GenericRegister(RTL)
     generic map(
-        WIDTH => CHIP8_ADDRESS_SIZE
+        WIDTH => CHIP8_ADDRESS_SIZE,
+        RST_VAL => 512 --0x200, tmp
     )
     port map (
         i_Clk => i_Clk,

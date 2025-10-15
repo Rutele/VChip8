@@ -7,7 +7,7 @@ project_root = Path(__file__).resolve().parents[3]
 sys.path.append(str(project_root / "tools"))
 from type_parser import CustomTypeParser
 
-custom_types = CustomTypeParser(project_root/"rtl"/"pkg"/"chip8_types.vhd")
+custom_types = CustomTypeParser([project_root/"rtl"/"pkg"/"chip8_types.vhd"])
 
 async def clear_alu(dut, op):
     dut.i_ALUCtrl.value = custom_types["chip8_alu_op_t"][op]

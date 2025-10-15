@@ -28,20 +28,16 @@ begin
                  chip8_fsm_state_writeVX |
                  chip8_fsm_state_writeVF =>
                 null;
-
             when chip8_fsm_state_decode =>
                 case i_InstrOpcode is
                     when chip8_instr_opcode_StoreImm |
                          chip8_instr_opcode_AddImm   =>
                         w_ALUOp     <= chip8_alu_add;
-
                     when chip8_instr_opcode_ALUExec =>
                         w_ALUOp     <= i_InstrSub;
-
                    when others =>
                         null;
                 end case;
-
             when others =>
                 null;
         end case;

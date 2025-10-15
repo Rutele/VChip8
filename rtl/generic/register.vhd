@@ -5,7 +5,8 @@ use work.chip8_const_pkg.all;
 
 entity GenericRegister is
     generic (
-        WIDTH : integer := CHIP8_WORD_SIZE
+        WIDTH : integer := CHIP8_WORD_SIZE;
+        RST_VAL : integer := 0
     );
     port (
         i_Clk  : in  std_logic;
@@ -26,7 +27,7 @@ begin
     begin
         if rising_edge(i_Clk) then
             if i_Rst = '1' then
-                o_Q <= (others => '0');
+                o_Q <= std_logic_vector(to_unsigned(RST_VAL, o_Q'length));
             elsif i_Write = '1' then
                 o_Q <= i_D;
             end if;

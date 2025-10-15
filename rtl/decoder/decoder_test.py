@@ -37,7 +37,7 @@ async def instruction_test(dut: SimHandleBase, trans_list: list[DecoderState]) -
 
 
 @cocotb.test()
-async def StoreImm_Test(dut):
+async def StoreImm_Test(dut: SimHandleBase):
     dut.i_InstrOpcode.value = custom_types["chip8_instr_opcode_t"]["chip8_instr_opcode_StoreImm"]
     dut.i_InstrSub.value = custom_types["chip8_alu_op_t"]["chip8_alu_nop"]
 
