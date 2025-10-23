@@ -35,8 +35,8 @@ architecture RTL of Datapath is
     signal r_VF : std_logic;
 
     -- Unpacked signals
-    signal w_ALU_VXSel, w_ALU_VYSel, w_RF_VXSel         : std_logic;
-    signal w_PCWrite, w_IRWrite, w_RRWrite, w_RFWrite   : std_logic;
+    signal w_ALU_VXSel, w_ALU_VYSel, w_RF_VXSel, w_RF_DataSel   : std_logic;
+    signal w_PCWrite, w_IRWrite, w_RRWrite, w_RFWrite           : std_logic;
 
     -- RF/ALU Data signals
     signal w_RFOutX, w_RFOutY, w_RFData,
@@ -53,9 +53,10 @@ begin
     w_RF_InstrSelX  <= r_IR(11 downto 8);
     w_RF_InstrSelY  <= r_IR(7 downto 4);
 
-    w_ALU_VXSel <= alu_vx_src_to_signal(i_SelSignals.alu_vx);
-    w_ALU_VYSel <= alu_vy_src_to_signal(i_SelSignals.alu_vy);
-    w_RF_VXSel  <= rf_vx_src_to_signal(i_SelSignals.rf_vx);
+    w_ALU_VXSel  <= alu_vx_src_to_signal(i_SelSignals.alu_vx);
+    w_ALU_VYSel  <= alu_vy_src_to_signal(i_SelSignals.alu_vy);
+    w_RF_VXSel   <= rf_vx_src_to_signal(i_SelSignals.rf_vx);
+    w_RF_DataSel <= rf_data_src_to_signal(i_SelSignals.rf_data);
 
     w_PCWrite   <= i_WriteSignals.PCWrite;
     w_IRWrite   <= i_WriteSignals.IRWrite;
@@ -85,13 +86,13 @@ begin
     port map(
         i_Sel => w_RF_VXSel,
         i_Data1 => w_RF_InstrSelX,
-        i_Data2 => (others => '0'), -- Add VF (modify ALU)
+        i_Data2 => (others => '1'),
         o_Data => w_RF_SelX
     );
 
     MUX_RF_DATA: entity work.MUX2(RTL)
     port map(
-        i_Sel => w_RF_VXSel,
+        i_Sel => w_RF_DataSel,
         i_Data1 => r_RR,
         i_Data2 => (CHIP8_WORD_SIZE-2 downto 0 => '0') & r_VF,
         o_Data => w_RFData

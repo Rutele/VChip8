@@ -8,6 +8,7 @@ entity SelectDecoder is
   port (
     i_FSMState    : in  chip8_fsm_state_t;
     i_InstrOpcode : in  chip8_instr_opcode_t;
+    i_InstrSub    : in chip8_alu_op_t;
     o_SelSignals  : out chip8_select_signals_t
   );
 end entity;
@@ -25,26 +26,26 @@ begin
                  chip8_fsm_state_reset |
                  chip8_fsm_state_writeVX =>
                 null;
-
             when chip8_fsm_state_decode =>
                 case i_InstrOpcode is
                     when chip8_instr_opcode_StoreImm =>
                         w_SelSignals.alu_vx <= chip8_alu_vx_zero;
                         w_SelSignals.alu_vy <= chip8_alu_vy_imm;
-
                     when chip8_instr_opcode_AddImm =>
                         w_SelSignals.alu_vy <= chip8_alu_vy_imm;
-
                     when chip8_instr_opcode_ALUExec =>
-                        null;
-
+                        case i_InstrSub is
+                            when chip8_alu_store_vy =>
+                                w_SelSignals.alu_vx <= chip8_alu_vx_zero;
+                            when others =>
+                                null;
+                        end case;
                     when others =>
                         null;
                 end case;
-
             when chip8_fsm_state_writeVF =>
                 w_SelSignals.rf_vx <= chip8_rf_vx_vf;
-
+                w_SelSignals.rf_data <= chip8_rf_data_fr;
             when others =>
                 null;
         end case;

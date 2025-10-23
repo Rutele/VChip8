@@ -6,7 +6,6 @@ use work.chip8_types_pkg.all;
 use work.chip8_decoder_types_pkg.all;
 
 entity InstructionDecoder is
-
     port(
         i_Clk : in std_logic;
         i_Rst : in std_logic;
@@ -16,59 +15,50 @@ entity InstructionDecoder is
         o_SelSignals : out chip8_select_signals_t;
         o_WriteSignals : out chip8_write_signals_t
     );
-
 end InstructionDecoder;
 
 architecture RTL of InstructionDecoder is
-
-    attribute syn_noprune : boolean;
-    attribute syn_noprune of RTL : architecture is true;
-
     signal r_CurrState       : chip8_fsm_state_t;
     signal w_ALUOp_int       : chip8_alu_op_t;
     signal w_SelSignals_int  : chip8_select_signals_t;
     signal w_WriteSignals_int: chip8_write_signals_t;
-    signal r_ALUOp           : chip8_alu_op_t;
-    signal r_SelSignals      : chip8_select_signals_t;
-    signal r_WriteSignals    : chip8_write_signals_t;
-
 begin
 
     e_SelectDecoder: entity work.SelectDecoder(RTL)
     port map(
-        i_FSMState => r_CurrState,
+        i_FSMState    => r_CurrState,
         i_InstrOpcode => i_InstrOpcode,
-        o_SelSignals => w_SelSignals_int
+        i_InstrSub    => i_InstrSub,
+        o_SelSignals  => w_SelSignals_int
     );
 
     e_WriteDecoder : entity work.WriteDecoder(RTL)
     port map(
-        i_FSMState => r_CurrState,
+        i_FSMState     => r_CurrState,
         o_WriteSignals => w_WriteSignals_int
     );
 
     e_ALUDecoder : entity work.ALUDecoder(RTL)
     port map(
-        i_FSMState => r_CurrState,
+        i_FSMState    => r_CurrState,
         i_InstrOpcode => i_InstrOpcode,
-        i_InstrSub => i_InstrSub,
-        o_ALUOp => w_ALUOp_int
+        i_InstrSub    => i_InstrSub,
+        o_ALUOp       => w_ALUOp_int
     );
 
-    process(i_Clk) is
+    process(i_Clk)
     begin
         if rising_edge(i_Clk) then
             if i_Rst = '1' then
-                r_CurrState    <= chip8_fsm_state_reset;
-                r_ALUOp        <= chip8_alu_nop;
-                r_SelSignals   <= CHIP8_SELECT_DEFAULT;
-                r_WriteSignals <= CHIP8_WRITE_DEFAULT;
+                r_CurrState <= chip8_fsm_state_reset;
             else
                 case r_CurrState is
                     when chip8_fsm_state_reset =>
                         r_CurrState <= chip8_fsm_state_fetch;
+
                     when chip8_fsm_state_fetch =>
                         r_CurrState <= chip8_fsm_state_decode;
+
                     when chip8_fsm_state_decode =>
                         case i_InstrOpcode is
                             when chip8_instr_opcode_StoreImm |
@@ -78,10 +68,12 @@ begin
                             when others =>
                                 r_CurrState <= chip8_fsm_state_fetch;
                         end case;
+
                     when chip8_fsm_state_writeVX =>
                         case i_InstrSub is
                             when chip8_alu_add | chip8_alu_sub |
-                                 chip8_alu_sl  | chip8_alu_sr =>
+                                 chip8_alu_sl  | chip8_alu_sr |
+                                 chip8_alu_sub_swap =>
                                 if i_InstrOpcode = chip8_instr_opcode_ALUExec then
                                     r_CurrState <= chip8_fsm_state_writeVF;
                                 else
@@ -90,22 +82,19 @@ begin
                             when others =>
                                 r_CurrState <= chip8_fsm_state_fetch;
                         end case;
+
                     when chip8_fsm_state_writeVF =>
                         r_CurrState <= chip8_fsm_state_fetch;
+
                     when others =>
                         r_CurrState <= chip8_fsm_state_fetch;
                 end case;
-    
-                r_ALUOp        <= w_ALUOp_int;
-                r_SelSignals   <= w_SelSignals_int;
-                r_WriteSignals <= w_WriteSignals_int;
-
             end if;
         end if;
     end process;
 
-    o_ALUOp <= r_ALUOp;
-    o_SelSignals <= r_SelSignals;
-    o_WriteSignals <= r_WriteSignals;
+    o_ALUOp        <= w_ALUOp_int;
+    o_SelSignals   <= w_SelSignals_int;
+    o_WriteSignals <= w_WriteSignals_int;
 
 end architecture;
