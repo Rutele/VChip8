@@ -7,4 +7,4 @@ VHDL_TYPES_PATH = BASE_DIR / "rtl" / "pkg" / "chip8_types.vhd"
 if not VHDL_TYPES_PATH.exists():
     raise FileNotFoundError(f"VHDL types file not found: {VHDL_TYPES_PATH}")
 
-custom_types = CustomTypeParser(VHDL_TYPES_PATH)
+custom_types = CustomTypeParser([VHDL_TYPES_PATH])

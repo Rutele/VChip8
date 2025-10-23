@@ -4,18 +4,17 @@ class CustomTypeParser:
     
     TYPE_VAL_CHAR_FILTER = {"(", ")", ";", ","}
 
-    def __init__(self, path: str = "../rtl/pkg/chip8_types.vhd"):
-        self.path = Path(path)
+    def __init__(self, paths: list[str] = ["../rtl/pkg/chip8_types.vhd"]):
+        self.paths = [Path(path) for path in paths]
         self.types: dict[str, dict[str, int]] = {}
         self.tokenized_types: list[list[str]] = []
 
-        self._validate_path()
-        self._tokenize_types()
+        self._parse_types()
         self._generate_dict()
 
     def __repr__(self):
         return f"Parsed types: {list(self.types.keys())}"
-    
+
     def __getitem__(self, key: str) -> dict[str, int]:
         if key not in self.types:
             raise KeyError(f"Type '{key}' not found! Available: {list(self.types.keys())}")
@@ -24,12 +23,18 @@ class CustomTypeParser:
     def __contains__(self, key: str) -> bool:
         return key in self.types
     
-    def _validate_path(self):
-        if not self.path.exists():
-            raise Exception(f"{self.path} does not exist!")
+    def _parse_types(self) -> None:
+        for path in self.paths:
+            print(path)
+            self._validate_path(path)
+            self._tokenize_types(path)
 
-    def _tokenize_types(self):
-        with open(self.path, 'r') as f:
+    def _validate_path(self, path: Path):
+        if not path.exists():
+            raise Exception(f"{path} does not exist!")
+
+    def _tokenize_types(self, file: Path):
+        with open(file, 'r') as f:
             load_lines = False
             current_type = []
 

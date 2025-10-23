@@ -12,11 +12,24 @@ tests = {
         "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd"],
         "test_module": "regfile_test"
     },
-    "instructiondecoder": {
-        "dut_path": "rtl/control/decoder.vhd",
-        "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd"],
-        "test_module": "decoder_test"
-    }
+    "programcounter": {
+        "dut_path": "rtl/datapath/pc/program_counter.vhd",
+        "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd",
+                         "rtl/generic/register.vhd"],
+        "test_module": "program_counter_test"
+    },
+    "aludecoder": {
+        "dut_path": "rtl/decoder/alu_decoder/alu_decoder.vhd",
+        "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd",
+                         "rtl/pkg/chip8_decoder_types.vhd"],
+        "test_module": "alu_decoder_test"
+    },
+    #"instructiondecoder": {
+    #    "dut_path": "rtl/control/decoder.vhd",
+    #    "dependencies": ["rtl/pkg/chip8_const.vhd", "rtl/pkg/chip8_types.vhd", 
+    #                     "rtl/control/source_decoder/source_decoder.vhd"],
+    #    "test_module": "decoder_test"
+    #}
 }
 
 
