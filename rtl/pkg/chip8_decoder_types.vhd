@@ -13,19 +13,22 @@ package chip8_decoder_types_pkg is
     type chip8_alu_vy_t is (chip8_alu_vy_normal, chip8_alu_vy_imm);
     type chip8_rf_vx_src_t is (chip8_rf_vx_normal, chip8_rf_vx_vf);
     type chip8_rf_data_src_t is (chip8_rf_data_rr, chip8_rf_data_fr);
+    type chip8_rr_data_src_t is (chip8_rr_data_alu, chip8_rr_data_rng);
 
     type chip8_select_signals_t is record
         alu_vx  : chip8_alu_vx_t;
         alu_vy  : chip8_alu_vy_t;
         rf_vx   : chip8_rf_vx_src_t;
         rf_data : chip8_rf_data_src_t;
+        rr_data : chip8_rr_data_src_t;
     end record chip8_select_signals_t;
 
     constant CHIP8_SELECT_DEFAULT : chip8_select_signals_t := (
         alu_vx => chip8_alu_vx_normal,
         alu_vy => chip8_alu_vy_normal,
         rf_vx => chip8_rf_vx_normal,
-        rf_data => chip8_rf_data_rr
+        rf_data => chip8_rf_data_rr,
+        rr_data => chip8_rr_data_alu
     );
 
     -- Write Signals Types
@@ -48,6 +51,7 @@ package chip8_decoder_types_pkg is
     function alu_vy_src_to_signal(src: chip8_alu_vy_t) return std_logic;
     function rf_vx_src_to_signal(src: chip8_rf_vx_src_t) return std_logic;
     function rf_data_src_to_signal(src: chip8_rf_data_src_t) return std_logic;
+    function rr_data_src_to_signal(src: chip8_rr_data_src_t) return std_logic;
 
 end package;
 
@@ -85,6 +89,15 @@ package body chip8_decoder_types_pkg is
         case src is
             when chip8_rf_data_rr => return '0';
             when chip8_rf_data_fr => return '1';
+            when others => return '0';
+        end case;
+    end function;
+
+    function rr_data_src_to_signal(src: chip8_rr_data_src_t) return std_logic is
+    begin
+        case src is
+            when chip8_rr_data_alu => return '0';
+            when chip8_rr_data_rng => return '1';
             when others => return '0';
         end case;
     end function;

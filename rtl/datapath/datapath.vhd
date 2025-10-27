@@ -35,12 +35,14 @@ architecture RTL of Datapath is
     signal r_VF : std_logic;
 
     -- Unpacked signals
-    signal w_ALU_VXSel, w_ALU_VYSel, w_RF_VXSel, w_RF_DataSel   : std_logic;
+    signal w_ALU_VXSel, w_ALU_VYSel, w_RF_VXSel, w_RF_DataSel,
+           w_RR_DataSel                                         : std_logic;
     signal w_PCWrite, w_IRWrite, w_RRWrite, w_RFWrite           : std_logic;
 
     -- RF/ALU Data signals
     signal w_RFOutX, w_RFOutY, w_RFData,
-           w_ALU_DataX, w_ALU_DataY, w_ALU_Result : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+           w_ALU_DataX, w_ALU_DataY, w_ALU_Result,
+           w_RNG_Data , w_RR_Data                               : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
     signal w_ALU_VF : std_logic;
 
 
@@ -57,6 +59,7 @@ begin
     w_ALU_VYSel  <= alu_vy_src_to_signal(i_SelSignals.alu_vy);
     w_RF_VXSel   <= rf_vx_src_to_signal(i_SelSignals.rf_vx);
     w_RF_DataSel <= rf_data_src_to_signal(i_SelSignals.rf_data);
+    w_RR_DataSel <= rr_data_src_to_signal(i_SelSignals.rr_data);
 
     w_PCWrite   <= i_WriteSignals.PCWrite;
     w_IRWrite   <= i_WriteSignals.IRWrite;
@@ -98,6 +101,14 @@ begin
         o_Data => w_RFData
     );
 
+    MUX_RR_DATA: entity work.MUX2(RTL)
+    port map(
+        i_Sel => w_RR_DataSel,
+        i_Data1 => w_ALU_Result,
+        i_Data2 => w_RNG_Data,
+        o_Data => w_RR_Data
+    );
+
     RegisterFile: entity work.RegisterFile(RTL)
     port map(
         i_Clk => i_Clk,
@@ -119,6 +130,14 @@ begin
         o_Flag => w_ALU_VF
     );
 
+    RNG: entity work.RNG(RTL)
+    port map(
+        i_Rst => i_Rst,
+        i_Clk => i_Clk,
+        i_Mask => w_Imm,
+        o_RandomNumber => w_RNG_Data
+    );
+
     PC: entity work.ProgramCounter(RTL)
     port map(
         i_Clk => i_Clk,
@@ -132,7 +151,7 @@ begin
         i_Clk => i_Clk,
         i_Rst => i_Rst,
         i_Write => w_RRWrite,
-        i_D => w_ALU_Result,
+        i_D => w_RR_Data,
         o_Q => r_RR
     );
 

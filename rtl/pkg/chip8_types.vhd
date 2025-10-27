@@ -23,6 +23,20 @@ package chip8_types_pkg is
         523 => x"15",   -- Sub V1 from V2
         524 => x"81",   -- 8127
         525 => x"27",   -- Sub V2 from V1, store in V2
+        526 => x"82",   -- 8XY2
+        527 => x"12",   -- Set V2 to V2 AND V1
+        528 => x"83",   -- 8XY1
+        529 => x"21",   -- Set V3 to V3 OR V1
+        530 => x"82",   -- 8XY3
+        531 => x"13",   -- Set V2 to V2 XOR V1
+        532 => x"80",   -- 8XY6
+        533 => x"36",   -- Shift VY right and store in VX
+        534 => x"81",   -- 8XYE
+        535 => x"3E",   -- Shift VY left and store in VX
+        536 => x"C4",   -- CXNN 
+        537 => x"FF",   -- Set V4 to RNG AND FF
+        538 => x"C5",   -- CXNN
+        539 => x"AA",   -- Set V5 to RNG AND AA
         others => x"00"
     );
 
@@ -31,8 +45,9 @@ package chip8_types_pkg is
                         chip8_alu_sr, chip8_alu_sl, chip8_alu_store_vy,
                         chip8_alu_sub_swap);
 
-    type chip8_instr_opcode_t is (chip8_instr_opcode_StoreImm, chip8_instr_opcode_ALUExec,
-                                  chip8_instr_opcode_AddImm, chip8_instr_opcode_Illegal);
+    type chip8_instr_opcode_t is (chip8_instr_opcode_Illegal, chip8_instr_opcode_StoreImm,
+                                  chip8_instr_opcode_ALUExec, chip8_instr_opcode_AddImm,
+                                  chip8_instr_opcode_SetRandom);
 
     --FUNCTIONS
     function inst_msb_to_inst_type(inst_msb: std_logic_vector(3 downto 0)) return chip8_instr_opcode_t;
@@ -48,6 +63,7 @@ package body chip8_types_pkg is
             when "0110" => return chip8_instr_opcode_StoreImm;
             when "0111" => return chip8_instr_opcode_AddImm;
             when "1000" => return chip8_instr_opcode_ALUExec;
+            when "1100" => return chip8_instr_opcode_SetRandom;
             when others => return chip8_instr_opcode_Illegal;
         end case;
     end function;

@@ -63,7 +63,8 @@ begin
                         case i_InstrOpcode is
                             when chip8_instr_opcode_StoreImm |
                                  chip8_instr_opcode_ALUExec |
-                                 chip8_instr_opcode_AddImm =>
+                                 chip8_instr_opcode_AddImm | 
+                                 chip8_instr_opcode_SetRandom =>
                                 r_CurrState <= chip8_fsm_state_writeVX;
                             when others =>
                                 r_CurrState <= chip8_fsm_state_fetch;

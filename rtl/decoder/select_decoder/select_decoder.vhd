@@ -33,6 +33,8 @@ begin
                         w_SelSignals.alu_vy <= chip8_alu_vy_imm;
                     when chip8_instr_opcode_AddImm =>
                         w_SelSignals.alu_vy <= chip8_alu_vy_imm;
+                    when chip8_instr_opcode_SetRandom =>
+                        w_SelSignals.rr_data <= chip8_rr_data_rng;
                     when chip8_instr_opcode_ALUExec =>
                         case i_InstrSub is
                             when chip8_alu_store_vy =>
