@@ -34,7 +34,12 @@ begin
                          chip8_instr_opcode_AddImm   =>
                         w_ALUOp     <= chip8_alu_add;
                     when chip8_instr_opcode_ALUExec =>
-                        w_ALUOp     <= i_InstrSub;
+                        case i_InstrSub is
+                            when chip8_alu_store_vy =>
+                                w_ALUOp <= chip8_alu_add;
+                            when others =>
+                                w_ALUOp <= i_InstrSub;
+                        end case;
                    when others =>
                         null;
                 end case;

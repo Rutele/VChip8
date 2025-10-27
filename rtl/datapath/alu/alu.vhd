@@ -31,6 +31,9 @@ begin
             when chip8_alu_sub =>
                 w_Result <= std_logic_vector(unsigned('0' & i_VX) - unsigned('0' & i_VY));
                 w_Flag <= '1' when (unsigned(i_VX) >= unsigned(i_VY)) else '0';-- Set when no borrow occurs
+            when chip8_alu_sub_swap =>
+                w_Result <= std_logic_vector(unsigned('0' & i_VY) - unsigned('0' & i_VX));
+                w_Flag <= '1' when (unsigned(i_VY) >= unsigned(i_VX)) else '0';-- Set when no borrow occurs
             when chip8_alu_and =>
                 w_Result <= '0' & (i_VX and i_VY);
             when chip8_alu_or =>
