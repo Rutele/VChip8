@@ -41,6 +41,10 @@ package chip8_types_pkg is
         541 => x"58",   -- Jump to adr 600 (x258)
         600 => x"60",   -- 
         601 => x"DD",   -- Store DD in V0
+        602 => x"B0",   -- 8NNN
+        603 => x"DD",   -- Jump to V0+NNN (822)
+        442 => x"6A",
+        443 => x"BB",   -- Store BB in VA
         others => x"00"
     );
 
