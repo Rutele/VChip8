@@ -36,9 +36,9 @@ architecture RTL of Datapath is
     signal r_VF : std_logic;
 
     -- Unpacked signals
-    signal w_ALU_VXSel, w_ALU_VYSel, w_RF_VXSel, w_RF_DataSel,
-           w_RR_DataSel                                         : std_logic;
-    signal w_PCWrite, w_IRWrite, w_RRWrite, w_RFWrite           : std_logic;
+    signal w_RF_DataSel, w_RR_DataSel                   : std_logic;
+    signal w_PCWrite, w_IRWrite, w_RRWrite, w_RFWrite   : std_logic;
+    signal w_ALU_VXSel, w_ALU_VYSel, w_RF_VXSel         : std_logic_vector(1 downto 0);
 
     -- RF/ALU Data signals
     signal w_RFOutX, w_RFOutY, w_RFData, w_ALU_ResultShort                  : std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
@@ -68,7 +68,7 @@ begin
     w_RRWrite   <= i_WriteSignals.RRWrite;
     w_RFWrite   <= i_WriteSignals.RFWrite;
 
-    MUX_ALUVX: entity work.MUX2(RTL)
+    MUX_ALUVX: entity work.MUX4(RTL)
     generic map(
         DATA_WIDTH => CHIP8_ADDRESS_SIZE
     )
@@ -76,10 +76,12 @@ begin
         i_Sel => w_ALU_VXSel,
         i_Data1 => x"0" & w_RFOutX,
         i_Data2 => (others => '0'),
+        i_Data3 => o_Address,
+        i_Data4 => (others => '0'), -- So the synthesis won't bitch
         o_Data => w_ALU_DataX
     );
 
-    MUX_ALUVY: entity work.MUX2(RTL)
+    MUX_ALUVY: entity work.MUX4(RTL)
     generic map(
         DATA_WIDTH => CHIP8_ADDRESS_SIZE
     )
@@ -87,10 +89,12 @@ begin
         i_Sel => w_ALU_VYSel,
         i_Data1 => x"0" & w_RFOutY,
         i_Data2 => x"0" & w_Imm,
+        i_Data3 => w_LongImm,
+        i_Data4 => std_logic_vector(to_unsigned(2, CHIP8_ADDRESS_SIZE)),
         o_Data => w_ALU_DataY
     );
 
-    MUX_RFVX: entity work.MUX2(RTL)
+    MUX_RFVX: entity work.MUX4(RTL)
     generic map(
         DATA_WIDTH => CHIP8_RF_SEL_SIZE
     )
@@ -98,6 +102,8 @@ begin
         i_Sel => w_RF_VXSel,
         i_Data1 => w_RF_InstrSelX,
         i_Data2 => (others => '1'),
+        i_Data3 => (others => '0'),
+        i_Data4 => (others => '0'),
         o_Data => w_RF_SelX
     );
 
@@ -149,12 +155,17 @@ begin
         o_RandomNumber => w_RNG_Data
     );
 
-    PC: entity work.ProgramCounter(RTL)
+    PC: entity work.GenericRegister(RTL)
+    generic map(
+        WIDTH => CHIP8_ADDRESS_SIZE,
+        RST_VAL => 512
+    )
     port map(
         i_Clk => i_Clk,
         i_Rst => i_Rst,
         i_Write => w_PCWrite,
-        o_InstrAddress => o_Address
+        i_D => r_RR,
+        o_Q => o_Address
     );
 
     RR: entity work.GenericRegister(RTL)

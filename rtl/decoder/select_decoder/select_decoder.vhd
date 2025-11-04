@@ -22,10 +22,12 @@ begin
         w_SelSignals <= CHIP8_SELECT_DEFAULT;
 
         case i_FSMState is
-            when chip8_fsm_state_fetch |
-                 chip8_fsm_state_reset |
+            when chip8_fsm_state_reset |
                  chip8_fsm_state_writeVX =>
                 null;
+            when chip8_fsm_state_fetch =>
+                w_SelSignals.alu_vx <= chip8_alu_vx_curraddress;
+                w_SelSignals.alu_vy <= chip8_alu_vy_two;
             when chip8_fsm_state_decode =>
                 case i_InstrOpcode is
                     when chip8_instr_opcode_StoreImm =>
@@ -35,6 +37,11 @@ begin
                         w_SelSignals.alu_vy <= chip8_alu_vy_imm;
                     when chip8_instr_opcode_SetRandom =>
                         w_SelSignals.rr_data <= chip8_rr_data_rng;
+                    when chip8_instr_opcode_Jump =>
+                        w_SelSignals.alu_vx <= chip8_alu_vx_zero;
+                        w_SelSignals.alu_vy <= chip8_alu_vy_longimm;
+                    when chip8_instr_opcode_JumpV0 =>
+                        w_SelSignals.alu_vy <= chip8_alu_vy_longimm;
                     when chip8_instr_opcode_ALUExec =>
                         case i_InstrSub is
                             when chip8_alu_store_vy =>

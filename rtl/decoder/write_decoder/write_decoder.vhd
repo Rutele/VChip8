@@ -24,12 +24,15 @@ begin
             when chip8_fsm_state_reset =>
                 w_WriteSignals.IRWrite <= '1';
             when chip8_fsm_state_fetch =>
-                w_WriteSignals.PCWrite <= '1';
+                w_WriteSignals.RRWrite <= '1';
                 w_WriteSignals.IRWrite <= '1';
             when chip8_fsm_state_decode =>
+                w_WriteSignals.PCWrite <= '1';
                 w_WriteSignals.RRWrite <= '1';
             when chip8_fsm_state_writeVX | chip8_fsm_state_writeVF =>
                 w_WriteSignals.RFWrite <= '1';
+            when chip8_fsm_state_Jump =>
+                w_WriteSignals.PCWrite <= '1';
             when others =>
                 null;
         end case;

@@ -37,6 +37,10 @@ package chip8_types_pkg is
         537 => x"FF",   -- Set V4 to RNG AND FF
         538 => x"C5",   -- CXNN
         539 => x"AA",   -- Set V5 to RNG AND AA
+        540 => x"12",   -- 1NNN
+        541 => x"58",   -- Jump to adr 600 (x258)
+        600 => x"60",   -- 
+        601 => x"DD",   -- Store DD in V0
         others => x"00"
     );
 
@@ -47,7 +51,8 @@ package chip8_types_pkg is
 
     type chip8_instr_opcode_t is (chip8_instr_opcode_Illegal, chip8_instr_opcode_StoreImm,
                                   chip8_instr_opcode_ALUExec, chip8_instr_opcode_AddImm,
-                                  chip8_instr_opcode_SetRandom);
+                                  chip8_instr_opcode_SetRandom, chip8_instr_opcode_Jump,
+                                  chip8_instr_opcode_JumpV0);
 
     --FUNCTIONS
     function inst_msb_to_inst_type(inst_msb: std_logic_vector(3 downto 0)) return chip8_instr_opcode_t;
@@ -64,6 +69,8 @@ package body chip8_types_pkg is
             when "0111" => return chip8_instr_opcode_AddImm;
             when "1000" => return chip8_instr_opcode_ALUExec;
             when "1100" => return chip8_instr_opcode_SetRandom;
+            when "0001" => return chip8_instr_opcode_Jump;
+            when "1011" => return chip8_instr_opcode_JumpV0;
             when others => return chip8_instr_opcode_Illegal;
         end case;
     end function;

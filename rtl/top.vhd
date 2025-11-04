@@ -27,7 +27,7 @@ begin
 
     w_Write <= '0';
 
-    Memory: entity work.Memory(RTL) /* synthesis syn_noprune =1 syn_sle_debug=1*/
+    Memory: entity work.Memory(RTL) /* synthesis syn_noprune =1 syn_sle_debug=1 */
     port map(
       i_Clk => i_Clk,
       i_Write => w_Write,
