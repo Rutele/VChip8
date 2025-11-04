@@ -6,15 +6,15 @@ use work.chip8_types_pkg.all;
 
 entity CHIP8_ALU is
     port(
-        i_VX, i_VY:     in std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+        i_VX, i_VY:     in std_logic_vector(CHIP8_ADDRESS_SIZE-1 downto 0);
         i_ALUCtrl:      in chip8_alu_op_t;
-        o_ALUResult:    out std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
+        o_ALUResult:    out std_logic_vector(CHIP8_ADDRESS_SIZE-1 downto 0);
         o_Flag:         out std_logic    -- Universal flag interpreted based on the instruction
     );
 end CHIP8_ALU;
 
 architecture RTL of CHIP8_ALU is
-    signal w_Result: std_logic_vector(CHIP8_WORD_SIZE downto 0);
+    signal w_Result: std_logic_vector(CHIP8_ADDRESS_SIZE downto 0);
     signal w_Flag: std_logic;
 begin
 
@@ -27,7 +27,7 @@ begin
         case i_ALUCtrl is
             when chip8_alu_add =>
                 w_Result <= std_logic_vector(unsigned('0' & i_VX) + unsigned('0' & i_VY));
-                w_Flag <= w_Result(CHIP8_WORD_SIZE); -- Carry flag
+                w_Flag <= w_Result(CHIP8_ADDRESS_SIZE); -- Carry flag
             when chip8_alu_sub =>
                 w_Result <= std_logic_vector(unsigned('0' & i_VX) - unsigned('0' & i_VY));
                 w_Flag <= '1' when (unsigned(i_VX) >= unsigned(i_VY)) else '0';-- Set when no borrow occurs
@@ -52,7 +52,7 @@ begin
         end case;
     end process;
 
-    o_ALUResult <= w_Result(CHIP8_WORD_SIZE-1 downto 0);
+    o_ALUResult <= w_Result(CHIP8_ADDRESS_SIZE-1 downto 0);
     o_Flag <= w_Flag;
 
 end architecture RTL;
