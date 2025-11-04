@@ -7,7 +7,8 @@ package chip8_decoder_types_pkg is
     -- TYPES
     type chip8_fsm_state_t is (chip8_fsm_state_fetch, chip8_fsm_state_decode,
                                chip8_fsm_state_writeVX, chip8_fsm_state_writeVF,
-                               chip8_fsm_state_reset, chip8_fsm_state_Jump);
+                               chip8_fsm_state_reset, chip8_fsm_state_Jump,
+                               chip8_fsm_state_JumpWait);
     -- Select Signals Types
     type chip8_alu_vx_t is (chip8_alu_vx_normal, chip8_alu_vx_zero, chip8_alu_vx_curraddress);
     type chip8_alu_vy_t is (chip8_alu_vy_normal, chip8_alu_vy_imm, chip8_alu_vy_longimm, chip8_alu_vy_two);

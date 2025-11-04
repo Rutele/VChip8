@@ -83,9 +83,11 @@ begin
                             when others =>
                                 r_CurrState <= chip8_fsm_state_fetch;
                         end case;
-                    when chip8_fsm_state_writeVF |
-                         chip8_fsm_state_Jump    =>
+                    when chip8_fsm_state_writeVF    |
+                         chip8_fsm_state_JumpWait   =>
                         r_CurrState <= chip8_fsm_state_fetch;
+                    when chip8_fsm_state_Jump    =>
+                        r_CurrState <= chip8_fsm_state_JumpWait;
                     when others =>
                         r_CurrState <= chip8_fsm_state_fetch;
                 end case;
