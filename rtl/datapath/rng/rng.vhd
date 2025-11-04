@@ -12,7 +12,7 @@ entity RNG is
         i_Rst : in std_logic;
         i_Clk : in std_logic;
         i_Mask : in std_logic_vector(CHIP8_WORD_SIZE-1 downto 0);
-        o_RandomNumber : out std_logic_vector(CHIP8_WORD_SIZE-1 downto 0)
+        o_RandomNumber : out std_logic_vector(CHIP8_ADDRESS_SIZE-1 downto 0)
     );
 end entity;
 
@@ -30,6 +30,6 @@ begin
     end process;
 
     w_XNOR <= r_LFSR(CHIP8_WORD_SIZE-1) xnor r_LFSR(CHIP8_WORD_SIZE-2);
-    o_RandomNumber <= r_LFSR and i_Mask;
+    o_RandomNumber <= x"0" & (r_LFSR and i_Mask);
 
 end architecture;

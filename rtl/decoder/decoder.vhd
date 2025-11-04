@@ -55,10 +55,8 @@ begin
                 case r_CurrState is
                     when chip8_fsm_state_reset =>
                         r_CurrState <= chip8_fsm_state_fetch;
-
                     when chip8_fsm_state_fetch =>
                         r_CurrState <= chip8_fsm_state_decode;
-
                     when chip8_fsm_state_decode =>
                         case i_InstrOpcode is
                             when chip8_instr_opcode_StoreImm |
@@ -66,10 +64,12 @@ begin
                                  chip8_instr_opcode_AddImm | 
                                  chip8_instr_opcode_SetRandom =>
                                 r_CurrState <= chip8_fsm_state_writeVX;
+                            when chip8_instr_opcode_Jump |
+                                 chip8_instr_opcode_JumpV0 =>
+                                r_CurrState <= chip8_fsm_state_Jump;
                             when others =>
                                 r_CurrState <= chip8_fsm_state_fetch;
                         end case;
-
                     when chip8_fsm_state_writeVX =>
                         case i_InstrSub is
                             when chip8_alu_add | chip8_alu_sub |
@@ -83,10 +83,11 @@ begin
                             when others =>
                                 r_CurrState <= chip8_fsm_state_fetch;
                         end case;
-
-                    when chip8_fsm_state_writeVF =>
+                    when chip8_fsm_state_writeVF    |
+                         chip8_fsm_state_JumpWait   =>
                         r_CurrState <= chip8_fsm_state_fetch;
-
+                    when chip8_fsm_state_Jump    =>
+                        r_CurrState <= chip8_fsm_state_JumpWait;
                     when others =>
                         r_CurrState <= chip8_fsm_state_fetch;
                 end case;

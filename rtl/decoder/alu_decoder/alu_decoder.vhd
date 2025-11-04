@@ -24,14 +24,17 @@ begin
         
         case i_FSMState is
             when chip8_fsm_state_reset   |
-                 chip8_fsm_state_fetch   |
                  chip8_fsm_state_writeVX |
                  chip8_fsm_state_writeVF =>
                 null;
+            when chip8_fsm_state_fetch   =>
+                w_ALUOp <= chip8_alu_add;
             when chip8_fsm_state_decode =>
                 case i_InstrOpcode is
                     when chip8_instr_opcode_StoreImm |
-                         chip8_instr_opcode_AddImm   =>
+                         chip8_instr_opcode_AddImm   | 
+                         chip8_instr_opcode_Jump     |
+                         chip8_instr_opcode_JumpV0   =>
                         w_ALUOp     <= chip8_alu_add;
                     when chip8_instr_opcode_ALUExec =>
                         case i_InstrSub is

@@ -48,13 +48,9 @@ begin
             if (i_Write = '1') then
                 m_Memory(r_Address) <= i_Data;
             end if;
-
-            r_Data <= m_Memory(r_Address) & m_Memory(r_Address + 1);
-
         end if;
-
     end process;
 
-    o_Data <= r_Data;
+    o_Data <= m_Memory(r_Address) & m_Memory(r_Address + 1);
 
 end architecture;
